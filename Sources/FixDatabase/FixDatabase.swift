@@ -17,7 +17,8 @@ struct FixDatabase {
 
         let filteredResponses = responses.filter { response in
             do{
-                return !(try response.event).record.eventType.hasPrefix("$")
+                let record = (try response.event).record
+                return !record.eventType.hasPrefix("$") || !record.streamIdentifier.name.hasPrefix("$")
             }catch{
                 print("error:", error)
                 return false
