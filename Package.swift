@@ -5,11 +5,23 @@ import PackageDescription
 
 let package = Package(
     name: "FixDatabase",
+    platforms: [
+        .macOS(.v15)
+    ],
+    dependencies: [
+        .package(url: "https://github.com/gradyzhuo/KurrentDB-Swift.git", from: "1.10.0"),
+    ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .executableTarget(
-            name: "FixDatabase"
+            name: "FixDatabase",
+            dependencies: [
+                .product(name: "KurrentDB", package: "kurrentdb-swift")
+            ]
         ),
+    ],
+    swiftLanguageModes: [
+        .v5
     ]
 )
