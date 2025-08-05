@@ -10,32 +10,27 @@ struct FixDatabase {
         let settings: ClientSettings = "kurrentdb://localhost:2113?tls=false"
         let client = KurrentDBClient(settings: settings)
         
-        let settings2: ClientSettings = .localhost(port: 2114)
+        let settings2: ClientSettings = "kurrentdb://172.16.100.55:2113?tls=false"
         let client2 = KurrentDBClient(settings: settings2)
         
-        let responses = try await client.readAllStreams()
-
-        let filteredResponses = responses.filter { response in
+        var faildResponses: [(Streams<AllStreams>.ReadAll.Response, any Error)] = []
+        let responses = try await client.readAllStreams(){
+            $0.resolveLinks()
+        }
+        
+        let recordEvents = try await responses.reduce(into: [RecordedEvent]()) { partialResult, response in
             do{
-                let record = (try response.event).record
-                return !record.eventType.hasPrefix("$") || !record.streamIdentifier.name.hasPrefix("$")
-            }catch{
-                print("error:", error)
-                return false
+                let record = try response.event.record
+                if !record.eventType.hasPrefix("$") && !record.streamIdentifier.name.hasPrefix("$") {
+                    partialResult.append(record)
+                }else {
+                    print("skipped record: \(record.eventType), \(record.streamIdentifier)")
+                }
+            }catch {
+                faildResponses.append((response, error))
             }
         }
-        
-        
-        let recordEvents = try await filteredResponses.reduce(into: [RecordedEvent]()) { partialResult, response in
-            guard let record = try? response.event.record else {
-                return
-            }
-            
-            partialResult.append(record)
-        }
-        
-        
-        
+
         let sortedEvents = recordEvents.sorted { (lhs, rhs) in
             guard let lhsJSON = try? JSONSerialization.jsonObject(with: lhs.data) as? [String: Any],
                   let rhsJSON = try? JSONSerialization.jsonObject(with: rhs.data) as? [String: Any],

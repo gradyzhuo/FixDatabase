@@ -1,5 +1,5 @@
 {
-  "originHash" : "86f83a7a07c10d7055409bb65b244dba7497545ca14df0dac7ba51e848f67cd4",
+  "originHash" : "52024a63d12a30c5ea9360a9495e2f2fca81881c4e74dea3ae6b206b6a1d8aa7",
   "pins" : [
     {
       "identity" : "grpc-swift-2",
@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/gradyzhuo/KurrentDB-Swift.git",
       "state" : {
-        "revision" : "732ec2075e71e63579dbea27d663d97a04eb0b3e",
-        "version" : "1.10.3"
+        "revision" : "cf9e29c02ef45e6f0c141fabd3d4ada51551f8bf",
+        "version" : "1.10.5"
       }
     },
     {
